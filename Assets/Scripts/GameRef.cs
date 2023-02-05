@@ -24,5 +24,6 @@ public class GameRef : MonoBehaviour
     public static void LockCursor()
     {
         Cursor.visible = false;
+        Application.targetFrameRate = 60;
     }
 }
