@@ -3,14 +3,16 @@ using System.Collections;
 
 public class CameraFollow : MonoBehaviour
 {
-    [SerializeField] Camera Cam;
     [SerializeField] float Speed = 20;
     [SerializeField] float Size = 2;
     [SerializeField] float FocusTime = 1;
 
+    Camera Cam;
     Transform PlayerT;
     IEnumerator Start()
     {
+        Cam = GetComponent<Camera>();
+
         float InitSize = Cam.orthographicSize;
         PlayerT = GameRef.Instance.PlayerCollect.transform;
         float TimeS = FocusTime;
