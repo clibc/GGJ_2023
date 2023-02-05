@@ -28,6 +28,6 @@ public class Block : MonoBehaviour
 
     public void Highligt(bool Value)
     { 
-        Renderer.color = Value ? Color.gray : Color.white;
+        Renderer.color = Value ? Color.white * 0.9f : Color.white;
     }
 }
