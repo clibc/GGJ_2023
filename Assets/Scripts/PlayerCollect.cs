@@ -13,19 +13,21 @@ public class PlayerCollect : MonoBehaviour
             Destroy(Col.gameObject);
             GameRef.Instance.Door.UpdateBones();
             GameRef.Instance.Cam.Focus(GameRef.Instance.Door.transform);
+            Audio.Play(audio_clip.Collect);
         }
         else if(Col.gameObject.CompareTag("Door"))
         {
-            Col.GetComponent<Door>().OpenDoor();
+            Col.GetComponent<Door>().EnterDoor();
         }
         else if(Col.gameObject.CompareTag("Zombie"))
         {
-            SceneManager.LoadScene(0);
+            SceneManager.LoadScene(Door.SceneCount % 2);
         }
         else if (Col.gameObject.CompareTag("DeadBlock"))
         {
             Debug.Log("DeadBlock");
-            SceneManager.LoadScene(0);
+            Audio.Play(audio_clip.Fail);
+            SceneManager.LoadScene(Door.SceneCount % 2);
         }
     }
 }

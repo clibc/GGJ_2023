@@ -7,13 +7,12 @@ public class Door : MonoBehaviour
     [SerializeField] Sprite ActivatedBoneSprite;
     [SerializeField] SpriteRenderer[] Bones;
 
-    static int SceneCount = 0;
+    public static int SceneCount = 0;
     
-    public void OpenDoor()
+    public void EnterDoor()
     {
         if(GameRef.Instance.PlayerCollect.BoneCount == 4)
         {
-            Anim.Play("DoorOpen");
             SceneCount += 1;
             SceneManager.LoadScene(SceneCount % 2);
         }
@@ -25,5 +24,9 @@ public class Door : MonoBehaviour
         {
             Bones[I].sprite = ActivatedBoneSprite;
         }
+		if(GameRef.Instance.PlayerCollect.BoneCount == 4)
+		{
+			Anim.Play("DoorOpen");
+		}
     }
 }

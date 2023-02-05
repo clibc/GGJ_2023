@@ -59,7 +59,11 @@ public class PlayerDig : MonoBehaviour
             CurrentlyHoveringTile.Hit();
             if(AnimCoroutine == null)
                 AnimCoroutine = StartCoroutine(PlayDigAnim());
+            Audio.Play(audio_clip.Dig);
         }
+
+        if(Input.GetKeyDown(KeyCode.Space))
+            Audio.Play(audio_clip.Jump);
     }
 
     void OnCursorGroundColliderEnter(Collider2D Other)
