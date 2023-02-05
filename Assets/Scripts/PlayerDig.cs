@@ -2,51 +2,70 @@ using UnityEngine;
 
 public class PlayerDig : MonoBehaviour
 {
-    [SerializeField] Transform TopCheckSpot;
-    [SerializeField] Transform BotCheckSpot;
-    [SerializeField] Transform RightCheckSpot;
-    [SerializeField] Transform LeftCheckSpot;
+    [SerializeField] GameObject CursorPrefab;
+    [SerializeField] float MaxRadius = 2.0f;
     [SerializeField] LayerMask GroundLayer;
+    Transform Player;
+    Camera MainCamera;
 
-    [SerializeField] SpriteAnimator PlayerAnimator;
-    [SerializeField] CharacterControllerBase CharacterController;
-    [SerializeField] Animator Animator;
+    GameObject Cursor;
+
+    Block CurrentlyHoveringTile;
+    Collider2D ColliderOld;
+
+    void Start()
+    {
+        MainCamera = Camera.main;
+
+        Cursor = Instantiate(CursorPrefab, transform);
+        Player = GameObject.FindGameObjectWithTag("Player").transform;
+    }
 
     void Update()
     {
-        bool IsDigging = false;
-        if(Input.GetKey(KeyCode.A) && Physics.CheckSphere(LeftCheckSpot.position, 0.1f, GroundLayer))
         {
-            Debug.Log("Digging Left");
-            IsDigging = true;
-        }
-        if (Input.GetKey(KeyCode.D) && Physics.CheckSphere(RightCheckSpot.position, 0.1f, GroundLayer))
-        {
-            Debug.Log("Digging Right");
-            IsDigging = true;
-        }
-        if (Input.GetKey(KeyCode.W) && Physics.CheckSphere(TopCheckSpot.position, 0.1f, GroundLayer))
-        {
-            Debug.Log("Digging Top");
-            IsDigging = true;
-        }
-        if (Input.GetKey(KeyCode.S) && Physics.CheckSphere(BotCheckSpot.position, 0.1f, GroundLayer))
-        {
-            Debug.Log("Digging Bottom");
-            IsDigging = true;
+            Vector3 PlayerPos = Player.position;
+            Vector3 MousePos = MainCamera.ScreenToWorldPoint(Input.mousePosition);
+            MousePos.z = PlayerPos.z;
+            Vector3 Diff = MousePos - Player.position;
+            MousePos = PlayerPos + Diff.normalized * Mathf.Clamp(Diff.magnitude, 0, MaxRadius);
+            Cursor.transform.position = MousePos;
         }
 
-        PlayerAnimator.enabled = !IsDigging;
-        if (IsDigging)
         {
-            Animator.Play("ClassicClimb");
-        }
-        else
-        {
-            if(PlayerAnimator.m_CurrentAnimationName != "")
+            Collider2D Col = Physics2D.OverlapCircle(Cursor.transform.position, 0.1f, GroundLayer);
+            if(Col != null && Col != ColliderOld)
             {
-                Animator.Play("Classic" + PlayerAnimator.m_CurrentAnimationName);
+                if(ColliderOld != null)
+                    OnCursorGroundColliderExit(ColliderOld);
+                OnCursorGroundColliderEnter(Col);
+                ColliderOld = Col;
+            }
+            else if(Col == null && ColliderOld != null)
+            {
+                OnCursorGroundColliderExit(ColliderOld);
+                ColliderOld = null;
             }
         }
+
+        if(CurrentlyHoveringTile != null)
+            Debug.Log(CurrentlyHoveringTile.gameObject.name);
+
+        if(Input.GetMouseButtonDown(0) && CurrentlyHoveringTile != null)
+        {
+            CurrentlyHoveringTile.Hit();
+        }
+    }
+
+    void OnCursorGroundColliderEnter(Collider2D Other)
+    {
+        CurrentlyHoveringTile = Other.transform.parent.GetComponent<Block>();
+        CurrentlyHoveringTile.Highligt(true);
+    }
+
+    void OnCursorGroundColliderExit(Collider2D Other)
+    {
+        Other.transform.parent.GetComponent<Block>().Highligt(false);
+        CurrentlyHoveringTile = null;
     }
 }
