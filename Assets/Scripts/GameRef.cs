@@ -6,6 +6,7 @@ public class GameRef : MonoBehaviour
 
     public Door Door;
     public PlayerCollect PlayerCollect;
+    public CameraFollow Cam;
 
     void Awake()
     {
@@ -17,5 +18,11 @@ public class GameRef : MonoBehaviour
         {
             Destroy(this);
         }
+    }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    public static void LockCursor()
+    {
+        Cursor.visible = false;
     }
 }

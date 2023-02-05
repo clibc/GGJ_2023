@@ -12,6 +12,7 @@ public class PlayerCollect : MonoBehaviour
             BoneCount += 1;
             Destroy(Col.gameObject);
             GameRef.Instance.Door.UpdateBones();
+            GameRef.Instance.Cam.Focus(GameRef.Instance.Door.transform);
         }
         else if(Col.gameObject.CompareTag("Door"))
         {

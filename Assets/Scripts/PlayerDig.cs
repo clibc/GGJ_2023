@@ -1,10 +1,13 @@
 using UnityEngine;
+using System.Collections;
 
 public class PlayerDig : MonoBehaviour
 {
     [SerializeField] GameObject CursorPrefab;
     [SerializeField] float MaxRadius = 2.0f;
     [SerializeField] LayerMask GroundLayer;
+    [SerializeField] SpriteAnimator SAnimator;
+    [SerializeField] Animator PlayerAnimator;
     Transform Player;
     Camera MainCamera;
 
@@ -54,6 +57,8 @@ public class PlayerDig : MonoBehaviour
         if(Input.GetMouseButtonDown(0) && CurrentlyHoveringTile != null)
         {
             CurrentlyHoveringTile.Hit();
+            if(AnimCoroutine == null)
+                AnimCoroutine = StartCoroutine(PlayDigAnim());
         }
     }
 
@@ -67,5 +72,17 @@ public class PlayerDig : MonoBehaviour
     {
         Other.transform.parent.GetComponent<Block>().Highligt(false);
         CurrentlyHoveringTile = null;
+    }
+
+    Coroutine AnimCoroutine = null;
+
+    IEnumerator PlayDigAnim()
+    {
+        SAnimator.enabled = false;
+        PlayerAnimator.Play("ClassicHit");
+        yield return new WaitForSeconds(0.25f);
+        PlayerAnimator.Play("Classic" + SAnimator.m_CurrentAnimationName);
+        SAnimator.enabled = true;
+        AnimCoroutine = null;
     }
 }
